@@ -1,0 +1,37 @@
+京东全屋家电选购顾问 — Cloudflare Pages + DeepSeek V7（从 Netlify V6 迁移）
+
+保留功能：红白界面、Logo、导购微信、3D 样板房、上传户型图、房间点选、AI 聊天、SKU 推荐（商品只在后端）。
+
+这个包是给 GitHub 仓库 wck-sc/123 上传用的，不是直接放进 Cloudflare 的网页拖拽部署。
+
+【A. 更新 GitHub】
+1. 解压压缩包。
+2. 打开 https://github.com/wck-sc/123/upload/main
+3. 从解压目录把 public 和 functions 两个文件夹本身拖进 GitHub 上传区域，保留目录层级；替换 public/index.html。
+4. 点击 Commit changes。上传后仓库根目录应能看到 functions/api/{chat.js,floorplan.js,status.js} 和 public/{index.html,scene.html,logo.jpg,wechat.jpg}。
+5. 以前的 netlify/functions、netlify.toml、根目录的旧 index.html 等可以暂时留着，Cloudflare 设置 publish=public 就不会用根目录的旧网页文件。
+6. 请不要上传 API Key 或 .env 文件。
+
+【B. 连接 Cloudflare Pages】
+1. 访问 https://dash.cloudflare.com/ 注册/登录，进入 Workers & Pages。
+2. Create application -> Pages -> Connect to Git，授权 GitHub，选 wck-sc/123，生产分支 main。
+3. Framework preset: None；Build command: 留空（如不允许留空可用 exit 0）；Build output directory: public；Root directory: /（默认）。
+4. 部署后 Cloudflare 会给一个 https://<项目名>.pages.dev 的网址。
+
+【C. 配置安全密钥】
+1. 进入 Cloudflare Pages 项目 -> Settings -> Variables and Secrets（界面可能显示 Environment variables）。
+2. Production 环境 Add -> 名称 DEEPSEEK_API_KEY，值填你在 DeepSeek 后台重新生成的密钥，选择 Encrypt/Secret 后保存。
+3. 请用新密钥；不要使用此前发到聊天中的已泄露密钥。Netlify 的密钥不会自动复制到 Cloudflare。
+4. 配完密钥后重新执行一次部署（Retry deployment 或提交一次新 commit）。
+
+【D. 测试】
+1. 用浏览器打开 https://<项目名>.pages.dev/api/status，应显示 {"ready":true,...}。只说明密钥存在，不代表 API 有额度。
+2. 打开首页问「三室一厅一卫，16.8 万预算，帮我配一套完整全屋家电方案」。
+3. 再尝试 JPG/PNG 户型图识别、3D 概念预览。
+
+【重要】
+- DeepSeek API 是否有可用余额或免费额度，需要在 DeepSeek 控制台查；Cloudflare 免费托管不代表模型调用免费。
+- 当前户型图生成的是可旋转的概念 3D，不是精确施工级建模，也不是你参考图的高精度室内 VR。
+- 方案金额为预算建议，不是实时京东售价；商品目录为 626 条部分 SKU，未验证实时价格/库存。
+- 公开推广给客户前，需要加调用频率限制、滥用防护和隐私提示，否则可能产生 API 费用。
+- 本版本保留前端在没配置密钥时的演示降级，但一定明确显示是演示而不是真实 AI。
