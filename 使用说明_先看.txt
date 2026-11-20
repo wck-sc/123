@@ -1,0 +1,19 @@
+京东全屋家电选购顾问 · DeepSeek V6
+
+此文件夹是支持 Netlify Functions 的完整项目源码，不是简单的静态网页。
+
+你已经在 Netlify 设置了 DEEPSEEK_API_KEY（注意：之前暴露的密钥必须撤销并替换为新密钥），下一步还要部署 Functions：
+
+简单建议：使用 GitHub 仓库 + Netlify 自动部署。
+1. 在 GitHub 创建一个私有仓库（Private），把压缩包解压后的内容上传到仓库根目录（特别是 public、netlify、netlify.toml）。不要上传任何 .env 或 API Key。
+2. 在 Netlify 原有项目里绑定 GitHub 仓库，并执行一次部署，这样可以尽量保留之前的网址。找到 Project configuration > Developer settings > Continuous deployment > Repository。不同界面可能略有差异。
+3. 部署日志应显示 Netlify Functions：chat, floorplan, status。
+4. 打开 https://你的站点/.netlify/functions/status，确认 ready:true（只说明密钥已配置）。
+5. 回到网页，点击“三室一厅一卫，16.8万预算”，有真实 DeepSeek 回复后才算 AI 联通。
+6. 选择 JPG/PNG 户型图，再点击 AI 识别生成 3D；结果只代表概念空间分区，不能用于施工。
+
+注意：Netlify 的普通拖拽静态发布不一定会部署 Functions。GitHub 自动部署或 Netlify CLI 才是安全可靠路径。
+DeepSeek API 可能收费或因余额不足报错，没有充值并不意味着能无限免费使用。建议先查看 DeepSeek 控制台余额并设置用量控制。
+数据：626 条部分商品目录只在服务端使用；没有实时价、库存与尺寸；建议预算≠销售报价。
+当前项目尚未用真实账号、真实密钥完成线上调用验证，不要当成已上线成熟系统。
+如要向大量真实客户开放，需要加防滥用、人机验证/速率限制、客户隐私告知。
